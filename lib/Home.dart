@@ -8,13 +8,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String _valor = "0";
-  void _recuperaValor()async{
-    String _url = "https://blockchain.info/ticker";
-    http.Response response = await http.get(_url);
-    Map<String, dynamic> retorno = json.decode(response.body);
+  String _valor_compra = "0";
+  String _valor_venda = "0";
+  void _jsonBitcoin()async{
+    http.Response response = await http.get("https://blockchain.info/ticker");
+    Map<String, dynamic> retornoJson = json.decode(response.body);
     setState(() {
-      _valor = retorno["BRL"]["buy"].toString();
+      _valor_compra = retornoJson["BRL"]["buy"].toString();
+      _valor_venda = retornoJson["BRL"]["sell"].toString();
     });
   }
   @override
@@ -31,19 +32,30 @@ class _HomeState extends State<Home> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  height: 120,
+                  height: 50,
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 20, bottom: 30),
-                  child: Image.asset("images/bitcoin.png"),
+                  child: Image.asset("images/logo2.png", height: 100,),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 30,bottom: 30),
                   child: Text(
-                    "R\$ ${_valor}",
+                    "R\$ ${_valor_compra} - Valor de Compra",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 35,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Big Shoulders Display",
+                    ),
+                  ),
+                ),Padding(
+                  padding: EdgeInsets.only(top: 30,bottom: 30),
+                  child: Text(
+                    "R\$ ${_valor_venda} - Valor de Venda",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
                       fontFamily: "Big Shoulders Display",
                     ),
@@ -54,11 +66,19 @@ class _HomeState extends State<Home> {
                   height: 60,
                   margin: EdgeInsets.all(30),
                   decoration: BoxDecoration(
-                    color: Colors.orange,
-                    borderRadius: BorderRadius.circular(30)
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.2, 1],
+                      colors: [
+                        Colors.orange,
+                        Colors.deepOrange
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
                   ),
                   child: FlatButton(
-                    onPressed: _recuperaValor,
+                    onPressed: _jsonBitcoin,
                     textColor: Colors.white,
                     child: Text(
                       "Atualizar",
@@ -70,7 +90,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 30),
+                  padding: EdgeInsets.only(top: 10),
                   child: Text(
                     "O valor do bitcoin é atualizado a cada 15min pela API https://blockchain.info/ticker",
                     textAlign: TextAlign.center,
